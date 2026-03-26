@@ -1,18 +1,28 @@
+# Virtual environments
 .venv/
 venv/
 .env
+
+# Data (regenerable via scripts/)
 data/raw/
 data/processed/
 data/entity_indices/
 data/vector_indices/
+data/scatterqa/
+data/annotations/
+!data/.gitkeep
+# Cache
 .diskcache/
 __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
-results/logs/*.log
-results/**/*.png
-results/**/*.pdf
+
+# Results (regenerable via experiments/)
+results/*
+!results/.gitkeep
+
+# OS / IDE
 .DS_Store
 Thumbs.db
 .vscode/
