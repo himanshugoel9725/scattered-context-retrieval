@@ -1,0 +1,17 @@
+{
+  "quality": {
+    "in_domain_mean": 0.04426593152539898,
+    "cross_domain_mean": 0.04422806439133983,
+    "degradation": 3.7867134059149654e-05
+  },
+  "cuad": {
+    "in_domain_mean": 0.06130413659467076,
+    "cross_domain_mean": 0.06558957702311607,
+    "degradation": -0.004285440428445315
+  },
+  "qasper": {
+    "in_domain_mean": 0.14363039597083724,
+    "cross_domain_mean": 0.15624219958248814,
+    "degradation": -0.012611803611650901
+  }
+}

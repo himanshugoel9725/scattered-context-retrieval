@@ -1,0 +1,65 @@
+# =============================================================
+# Per-Domain Gold Attribute Definitions for ICS
+# ICS = (attributes present in answer) / (total gold attributes)
+# =============================================================
+# LLM is used ONLY as a binary presence-checker against this inventory.
+# It answers: "Does the answer mention attribute X? Yes/No"
+# The LLM is NEVER used as a soft quality judge for ICS.
+
+domains:
+  narrative_character:
+    description: "Attributes for fictional characters in novels/scripts"
+    attributes:
+      - name: appearance
+        description: "Physical description, clothing, distinguishing features"
+        probe: "Does the answer describe the character's physical appearance?"
+      - name: background_history
+        description: "Origin, upbringing, education, past events"
+        probe: "Does the answer mention the character's background or history?"
+      - name: personality_traits
+        description: "Temperament, habits, behavioral patterns"
+        probe: "Does the answer describe personality traits or behavioral patterns?"
+      - name: relationships
+        description: "Connections to other characters (family, friends, enemies)"
+        probe: "Does the answer mention relationships with other characters?"
+      - name: character_arc
+        description: "How the character changes throughout the story"
+        probe: "Does the answer describe how the character changes or develops?"
+
+  legal_party:
+    description: "Attributes for contract parties"
+    attributes:
+      - name: obligations
+        description: "What the party must do under the contract"
+        probe: "Does the answer list obligations or duties of the party?"
+      - name: rights
+        description: "What the party is entitled to"
+        probe: "Does the answer mention rights or entitlements?"
+      - name: termination_conditions
+        description: "Under what conditions the party can terminate"
+        probe: "Does the answer describe termination conditions?"
+      - name: liability_limitations
+        description: "Caps on liability, indemnification"
+        probe: "Does the answer mention liability limits or indemnification?"
+      - name: confidentiality_terms
+        description: "Non-disclosure obligations"
+        probe: "Does the answer address confidentiality or non-disclosure?"
+
+  scientific_method:
+    description: "Attributes for methods/models in scientific papers"
+    attributes:
+      - name: architecture
+        description: "Model architecture, key components"
+        probe: "Does the answer describe the model architecture or key components?"
+      - name: training_procedure
+        description: "How the model is trained, loss functions, data"
+        probe: "Does the answer explain the training procedure?"
+      - name: hyperparameters
+        description: "Learning rate, batch size, epochs, etc."
+        probe: "Does the answer mention specific hyperparameters?"
+      - name: evaluation_setup
+        description: "Datasets, metrics, baselines used for evaluation"
+        probe: "Does the answer describe the evaluation methodology?"
+      - name: key_results
+        description: "Main findings, performance numbers"
+        probe: "Does the answer report key results or performance numbers?"

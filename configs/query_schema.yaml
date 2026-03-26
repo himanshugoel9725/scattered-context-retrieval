@@ -1,0 +1,71 @@
+# =============================================================
+# Formal Query Annotation Schema
+# Every annotated query carries these metadata fields.
+# =============================================================
+
+query_metadata:
+  fields:
+    query_id:
+      type: string
+      description: "Unique identifier: {dataset}_{doc_id}_{query_num}"
+
+    query_text:
+      type: string
+      description: "The original question text"
+
+    query_type:
+      type: enum
+      values: [localized, scattered]
+      description: >
+        localized = answer found in 1-2 contiguous chunks
+        scattered = answer requires 3+ chunks from different document regions
+      derived_from: "gold_chunk_ids count and positional spread"
+
+    focus_type:
+      type: enum
+      values: [entity, event, relation]
+      description: >
+        entity = question about a specific named entity's attributes
+        event = question about what happened
+        relation = question about relationship between entities
+
+    gold_entity:
+      type: string
+      nullable: true
+      description: "Target entity name (null for event/relation focus)"
+
+    scatter_category:
+      type: enum
+      nullable: true
+      values:
+        - progressive_accumulation    # Info builds gradually, each mention adds a bit
+        - distributed_attributes      # Different attributes in different sections
+        - contradictory_evolution      # Entity description changes over time
+        - cross_reference              # Understanding entity A requires entity B info
+        - implicit_scatter             # Entity not named, described via pronouns/references
+      description: "Assigned during Exp 3.1 taxonomy analysis"
+
+    required_chunks_count:
+      type: integer
+      description: "Minimum chunks needed for a complete answer"
+
+    gold_chunk_ids:
+      type: list[string]
+      description: "All chunk IDs containing relevant information"
+
+    domain:
+      type: enum
+      values: [narrative, legal, scientific, benchmark]
+
+    scatter_factor:
+      type: float
+      description: "Computed SF for the target entity in this document"
+
+# Classification rules for query_type:
+classification:
+  localized:
+    max_chunks: 2
+    max_decile_spread: 2
+  scattered:
+    min_chunks: 3
+    min_decile_spread: 3

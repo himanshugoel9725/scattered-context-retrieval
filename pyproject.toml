@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "scatter-rag"
+version = "0.1.0"
+description = "Entity-Centric Aggregation for Distributed Information in RAG"
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

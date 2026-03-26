@@ -1,0 +1,91 @@
+# =============================================================
+# Model Configuration
+# =============================================================
+# execution_profile: local | api
+# Switch to "api" if local sentence-transformers/spaCy is too slow
+
+execution_profile: local
+
+# --- Embedding Models ---
+embeddings:
+  local:
+    dev:
+      name: "all-MiniLM-L6-v2"
+      dim: 384
+      max_tokens: 256
+    production:
+      name: "intfloat/e5-large-v2"
+      dim: 1024
+      max_tokens: 512
+  api_fallback:
+    provider: openai
+    model: "text-embedding-3-small"
+    dim: 1536
+    cost_per_1m_tokens: 0.02
+
+# --- NER ---
+ner:
+  model: "en_core_web_lg"
+  entity_types: ["PERSON", "ORG", "GPE", "FAC", "WORK_OF_ART"]
+
+# --- Coreference Resolution ---
+# NOTE: fastcoref chosen as CPU-feasible substitute for the theory's
+# spaCy+neuralcoref / AllenNLP coref. neuralcoref is abandoned (Python 3.6 era),
+# AllenNLP coref requires GPU for reasonable speed.
+# Reference: Otmazgin et al., 2023
+coref:
+  model: "fastcoref"
+  max_segment_len: 4096
+  device: "cpu"
+
+# --- LLM APIs ---
+llm:
+  generation:
+    dev:
+      provider: openai
+      model: "gpt-4o-mini"
+      max_tokens: 2048
+      temperature: 0.0
+      cost_per_1m_input: 0.15
+      cost_per_1m_output: 0.60
+    production:
+      provider: openai
+      model: "gpt-4o"
+      max_tokens: 2048
+      temperature: 0.0
+      cost_per_1m_input: 2.50
+      cost_per_1m_output: 10.00
+
+  judge:
+    provider: openai
+    model: "gpt-4o"
+    max_tokens: 1024
+    temperature: 0.0
+
+  # Exp 2.4: LLM backbone comparison
+  comparison:
+    gpt4o:
+      provider: openai
+      model: "gpt-4o"
+    gpt4o_mini:
+      provider: openai
+      model: "gpt-4o-mini"
+    claude_sonnet:
+      provider: anthropic
+      model: "claude-sonnet-4-20250514"
+    gemini_pro:
+      provider: google
+      model: "gemini-2.5-pro"
+    llama3_70b:
+      provider: together
+      model: "meta-llama/Llama-3-70b-chat-hf"
+    llama3_8b:
+      provider: together
+      model: "meta-llama/Llama-3-8b-chat-hf"
+
+# --- Chunking ---
+chunking:
+  method: "fixed_size"
+  chunk_size: 512       # tokens
+  overlap: 128          # tokens
+  tokenizer: "tiktoken"  # cl100k_base

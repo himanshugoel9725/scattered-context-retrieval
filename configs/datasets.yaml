@@ -1,0 +1,118 @@
+# =============================================================
+# Dataset Taxonomy — Single Source of Truth
+# =============================================================
+# Roles: CORE (in main Exp 2.1), SUPPLEMENTARY, INFRASTRUCTURE
+
+datasets:
+  # --- CORE datasets (used in Exp 2.1 main results) ---
+  narrativeqa:
+    role: core
+    domain: narrative
+    description: "1,567 documents (books + movie scripts), 46,765 QA pairs"
+    access:
+      primary: direct_download
+      url: "https://github.com/deepmind/narrativeqa"
+      files:
+        summaries: "third_party/wikipedia/summaries.csv"
+        qaps: "qaps.csv"
+        documents: "documents.csv"
+    sample_sizes:
+      exp1_1: 40   # entities (characters)
+      exp1_2: 500  # questions (250 localized + 250 scattered)
+      exp1_3: 200  # scattered queries
+      exp2_1: 300  # main experiment queries
+      exp2_2: 200  # ablation queries
+    filter: "entity_centric"  # filter for entity-centric questions
+
+  cuad:
+    role: core
+    domain: legal
+    description: "510 commercial contracts, 13,000+ annotations, 41 clause types"
+    access:
+      primary: direct_download
+      url: "https://github.com/TheAtticusProject/cuad"
+      files:
+        data: "data.zip"
+    sample_sizes:
+      exp1_1: 30   # entities (contract parties)
+      exp2_1: 300
+    filter: "party_obligations"
+
+  qasper:
+    role: core
+    domain: scientific
+    description: "5,049 questions on 1,585 NLP papers"
+    access:
+      primary: direct_download
+      url: "https://github.com/allenai/qasper-led-baseline"
+      files:
+        train: "qasper-train-v0.3.json"
+        dev: "qasper-dev-v0.3.json"
+        test: "qasper-test-v0.3.json"
+    sample_sizes:
+      exp1_1: 30   # entities (methods/models)
+      exp2_1: 300
+
+  scatterqa:
+    role: core
+    domain: benchmark
+    description: "Custom benchmark: 50 novels, 500 entities, 2500 QA pairs"
+    access:
+      primary: local_build  # built in Phase 3
+      path: "data/scatterqa/"
+    sample_sizes:
+      exp2_1: 300
+
+  # --- SUPPLEMENTARY datasets ---
+  novelhopqa:
+    role: supplementary
+    domain: narrative
+    description: "4,000 multi-hop QA from Project Gutenberg novels, 64K-128K ctx"
+    access:
+      primary: direct_download
+      url: "https://github.com/NovelHopQA/NovelHopQA"
+    used_in: [exp1_2, exp3_1]
+
+  quality:
+    role: supplementary
+    domain: general
+    description: "6,737 questions on 265 long articles, multiple-choice"
+    access:
+      primary: direct_download
+      url: "https://github.com/nyu-mll/quality"
+      files:
+        data: "data/v1.0.1/"
+    used_in: [exp1_2, exp3_4]
+
+  # --- INFRASTRUCTURE ---
+  gutenberg:
+    role: infrastructure
+    domain: narrative
+    description: "70,000+ free public-domain books for ScatterQA construction"
+    access:
+      primary: gutenbergpy
+      fallback: "https://www.gutenberg.org"
+
+# --- Optional supplementary (NOT downloaded by default) ---
+supplementary_optional:
+  conteb:
+    description: "Context-aware Text Embedding Benchmark — NarrativeQA subset with chunk-level gold"
+    use_case: "Only if chunk-level gold annotations needed from NarrativeQA"
+  multihop_rag:
+    description: "News articles with multi-hop queries requiring cross-document reasoning"
+    use_case: "Future work: cross-document scatter"
+  loong:
+    description: "Extended multi-document QA where every document is relevant"
+    use_case: "Future work: full-context utilization"
+  musique:
+    description: "2-4 hop compositional questions"
+    use_case: "Optional multi-hop baseline comparison"
+
+# --- Paths ---
+paths:
+  raw: "data/raw"
+  processed: "data/processed"
+  entity_indices: "data/entity_indices"
+  vector_indices: "data/vector_indices"
+  annotations: "data/annotations"
+  scatterqa: "data/scatterqa"

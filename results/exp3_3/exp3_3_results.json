@@ -1,0 +1,257 @@
+{
+  "distribution": {
+    "synthesis_hallucination": 50
+  },
+  "cases": [
+    {
+      "query": "How much time has passed between Blake's night with Eldoria and his search for Sabrina York in his mind-world?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.0061162079510703364
+    },
+    {
+      "query": "Why does Deirdre get so upset when Blake Past suggests she go to prom with the young man?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.06962025316455697
+    },
+    {
+      "query": "Why does shame flame in Blake's cheeks when Deirdre goes to prepare Eldoria's dias?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.04419889502762431
+    },
+    {
+      "query": "Why did Blake create the three female super-images of Miss Stoddart, Officer Finch, and Vera Velvetskin?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.03759398496240601
+    },
+    {
+      "query": "Sabrina York is ",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.02197802197802198
+    },
+    {
+      "query": "Why doesn't Blake haggle with Eldoria about the price for her services?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.06289308176100629
+    },
+    {
+      "query": "Why did Blake feel awkward in the hut?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.030172413793103453
+    },
+    {
+      "query": "What is the most likely reason that Blake says he is a god?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.035928143712574856
+    },
+    {
+      "query": "Blake's mind country was made of:",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.03225806451612903
+    },
+    {
+      "query": "Why did Blake visit his mom in the kitchen?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.011363636363636362
+    },
+    {
+      "query": "Why was Deirdre sad after she left the bench?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.05177993527508091
+    },
+    {
+      "query": "Where did Blake begin his chase of Sabrina?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.019801980198019806
+    },
+    {
+      "query": "What led to the first person entering their own mind world?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.1111111111111111
+    },
+    {
+      "query": "What caused Blake to suspect where Sabrina was?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.027624309392265196
+    },
+    {
+      "query": "Why did the Tr'en leave Korvin's door unlocked and a weapon nearby?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.07065217391304347
+    },
+    {
+      "query": "Why does the text mean when it says that Korvin was \"unconscious\" at the time of his lessons in the local language?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.06844106463878326
+    },
+    {
+      "query": "How was Korvin able to avoid disclosing the true intent of his mission under the lie detector questioning? ",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.05555555555555555
+    },
+    {
+      "query": "What is the most likely reason for Korvin's solitude in jail?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.046948356807511735
+    },
+    {
+      "query": "Why does the Tr'en's logic fail them?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.02321083172147002
+    },
+    {
+      "query": "Are there indications that the Tr'en would be interested in attacking Earth? Why or why not?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.0320855614973262
+    },
+    {
+      "query": "The text says \"The expert frowned horribly.\" What makes the expert's smile so horrible?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.1794871794871795
+    },
+    {
+      "query": "How did the Ruler become the Ruler?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.035460992907801414
+    },
+    {
+      "query": "Why did the Tr'en think that Korvin was a traitor to Earth?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.028639618138424822
+    },
+    {
+      "query": "What is the best description of Korvin's job?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.041379310344827586
+    },
+    {
+      "query": "Why did the Tr'en let Korvin go?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.004338394793926247
+    },
+    {
+      "query": "What was Korvin's plan?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.01909307875894988
+    },
+    {
+      "query": "The Tr'en's response to Korvin's behavior can best be categorized as:",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.0
+    },
+    {
+      "query": "Why did Korvin have to word his questions to the guard carefully?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.03389830508474577
+    },
+    {
+      "query": "How does Korvin feel about the laws on Earth?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.04522613065326633
+    },
+    {
+      "query": "The chronology of Korvin's time with the Tr'en is:",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.010968921389396709
+    },
+    {
+      "query": "Why did the truth not make sense to the Tr'en?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.009389671361502348
+    },
+    {
+      "query": "What were the topics of the Tr'en's questions to Korvin about Earth?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.013452914798206277
+    },
+    {
+      "query": "What was the main reason Korvin did not try to escape earlier?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.03636363636363636
+    },
+    {
+      "query": "What is the most likely meaning of the slang O.Q.? (in twentieth-century American English)",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.007462686567164179
+    },
+    {
+      "query": "Why does the Skipper stop abruptly after he says \"when you're running a blockade\"?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.17777777777777778
+    },
+    {
+      "query": "Who or what is Leo?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.040697674418604654
+    },
+    {
+      "query": "Why does the Skipper allow the new chef to use the heat-cannon as an incinerator?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.15942028985507248
+    },
+    {
+      "query": " Lieutenant Dugan brings up the examples of \"High G\" Gordon and \"Runt\" Hake in order to illustrates that...",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.03125
+    },
+    {
+      "query": "Why didn't the Skipper follow the new cook's advice about avoiding Vesta?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.0297029702970297
+    },
+    {
+      "query": "Why was the new cook so upset that the Skipper decided to surrender?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.10344827586206896
+    },
+    {
+      "query": "What does the Skipper mean by \"lady-logic\"?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.01801801801801802
+    },
+    {
+      "query": "What would've happened if the new cook had told the Skipper about the ekalastron deposits earlier?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.1
+    },
+    {
+      "query": "Why was the cook called Captain Slops?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.02684563758389262
+    },
+    {
+      "query": "What is the most likely explanation for the cook's demeanor and behavior?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.022598870056497175
+    },
+    {
+      "query": "How did Dugan find a new cook?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.005952380952380953
+    },
+    {
+      "query": "How did the cook get the tool he wanted in the kitchen?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.07920792079207921
+    },
+    {
+      "query": "How do they get from the kitchen to the control room?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.04301075268817204
+    },
+    {
+      "query": "What would have most likely happened if the captain followed the cook's advice?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.06837606837606837
+    },
+    {
+      "query": "Why was the ship's crew happy about their voyage?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.09523809523809523
+    },
+    {
+      "query": "Why did the ship try to travel via Vesta?",
+      "error_type": "synthesis_hallucination",
+      "rougeL": 0.02588996763754045
+    }
+  ]
+}
