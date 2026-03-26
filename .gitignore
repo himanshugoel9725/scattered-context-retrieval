@@ -11,6 +11,8 @@ __pycache__/
 *.pyo
 .pytest_cache/
 results/logs/*.log
+results/**/*.png
+results/**/*.pdf
 .DS_Store
 Thumbs.db
 .vscode/
