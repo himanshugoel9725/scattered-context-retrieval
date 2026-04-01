@@ -92,6 +92,7 @@ def generate_entity_questions(entity_data: dict[str, Any],
             entity_id=f"{doc_id}:{entity_name}",
             gold_chunk_ids=entity_chunks,
             gold_attributes=gold_attributes,
+            attribute_chunks=annotations,
             query_metadata=QueryMetadata(
                 query_type="scattered",
                 focus_type="entity",

@@ -41,16 +41,20 @@ class GoldEvidence:
     entity_id: str
     gold_chunk_ids: list[str] = field(default_factory=list)
     gold_attributes: dict[str, str] = field(default_factory=dict)  # {attribute_name: gold_text_evidence}
+    attribute_chunks: dict[str, list[str]] = field(default_factory=dict)  # {attribute_label: [chunk_ids]}
     query_metadata: QueryMetadata = field(default_factory=lambda: QueryMetadata("scattered", "entity"))
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "query_id": self.query_id,
             "entity_id": self.entity_id,
             "gold_chunk_ids": self.gold_chunk_ids,
             "gold_attributes": self.gold_attributes,
             "query_metadata": self.query_metadata.to_dict(),
         }
+        if self.attribute_chunks:
+            d["attribute_chunks"] = self.attribute_chunks
+        return d
 
     @classmethod
     def from_dict(cls, d: dict) -> "GoldEvidence":
@@ -60,6 +64,7 @@ class GoldEvidence:
             entity_id=d["entity_id"],
             gold_chunk_ids=d.get("gold_chunk_ids", []),
             gold_attributes=d.get("gold_attributes", {}),
+            attribute_chunks=d.get("attribute_chunks", {}),
             query_metadata=meta,
         )
 
