@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 COST_TABLE = {
     "gpt-4o": {"input": 2.50, "output": 10.00},
     "gpt-4o-mini": {"input": 0.15, "output": 0.60},
+    "gpt-4.1-nano": {"input": 0.10, "output": 0.40},
     "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00},
     "gemini-2.5-pro": {"input": 1.25, "output": 5.00},
     "meta-llama/Llama-3-70b-chat-hf": {"input": 0.90, "output": 0.90},

@@ -174,7 +174,7 @@ def run_retrieval_metrics(records, book_cache):
     return all_results
 
 
-def run_rouge_phase(all_results, records, book_cache):
+def run_rouge_phase(all_results, records, book_cache, checkpoint_path: Path | None = None):
     """Phase 2: compute ROUGE-L via cached synthesis."""
     from rouge_score import rouge_scorer
     from src.generation.synthesizer import synthesize, to_synthesis_chunks
@@ -182,7 +182,31 @@ def run_rouge_phase(all_results, records, book_cache):
     scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
     t_start = time.time()
 
+    # Resume: find first record that hasn't been ROUGE-scored yet
+    start_idx = 0
+    if checkpoint_path and checkpoint_path.exists():
+        with open(checkpoint_path) as f:
+            cached = json.load(f)
+        # Merge cached scores back into all_results
+        cached_by_qid = {r["query_id"]: r for r in cached}
+        for entry, rec in zip(all_results, records):
+            if rec.query_id in cached_by_qid:
+                for sname in STRATEGY_NAMES:
+                    key = f"{sname}_rougeL"
+                    if key in cached_by_qid[rec.query_id]:
+                        entry[key] = cached_by_qid[rec.query_id][key]
+        # Find first unscored entry
+        for i, entry in enumerate(all_results):
+            if f"BM25_rougeL" not in entry:
+                start_idx = i
+                break
+        else:
+            start_idx = len(all_results)  # fully done
+        logger.info("Resuming Phase 2 from record %d / %d", start_idx, len(records))
+
     for i, (entry, rec) in enumerate(zip(all_results, records)):
+        if i < start_idx:
+            continue
         parts = rec.entity_id.split(":", 1)
         doc_id = parts[0]
         book_id = int(doc_id.replace("gutenberg_", ""))
@@ -210,7 +234,7 @@ def run_rouge_phase(all_results, records, book_cache):
                 ))
 
             syn_chunks = to_synthesis_chunks(fake_results[:K], chunk_map, doc_id)
-            result = synthesize(query, syn_chunks, entity=entity, model="gpt-4o-mini")
+            result = synthesize(query, syn_chunks, entity=entity, model="gpt-4.1-nano")
             answer = result["answer"]
 
             scores = scorer.score(reference, answer)
@@ -219,6 +243,15 @@ def run_rouge_phase(all_results, records, book_cache):
         if (i + 1) % 10 == 0 or (i + 1) == len(records):
             elapsed = time.time() - t_start
             logger.info("[%d/%d] ROUGE done (%.1fs elapsed)", i + 1, len(records), elapsed)
+            # Checkpoint: save current results so we can resume on crash
+            if checkpoint_path:
+                save_results_cp = []
+                for r in all_results:
+                    if f"BM25_rougeL" in r:  # only save ROUGE-completed records
+                        entry_cp = {k: v for k, v in r.items() if not k.endswith("_chunk_ids")}
+                        save_results_cp.append(entry_cp)
+                with open(checkpoint_path, "w") as f:
+                    json.dump(save_results_cp, f)
 
     return all_results
 
@@ -280,7 +313,8 @@ def main():
                         help="Skip ROUGE-L (avoids LLM synthesis calls)")
     args = parser.parse_args()
 
-    gold_path = data_dir("scatterqa") / "gold_evidence_annotated.jsonl"
+    _clean = data_dir("scatterqa") / "gold_evidence_annotated_cleaned.jsonl"
+    gold_path = _clean if _clean.exists() else data_dir("scatterqa") / "gold_evidence_annotated.jsonl"
     if not gold_path.exists():
         logger.error("Annotated file not found: %s", gold_path)
         sys.exit(1)
@@ -295,15 +329,28 @@ def main():
     logger.info("=== Phase 0: Building indices ===")
     book_cache = build_book_indices(records, chunker)
 
-    # Phase 1: Retrieval metrics (fast)
-    logger.info("=== Phase 1: Retrieval metrics ===")
-    all_results = run_retrieval_metrics(records, book_cache)
+    phase1_checkpoint = out_dir / "phase1_checkpoint.json"
+    rouge_checkpoint = out_dir / "phase2_rouge_checkpoint.json"
+
+    # Phase 1: Retrieval metrics (fast) — resume from checkpoint if available
+    if phase1_checkpoint.exists():
+        logger.info("=== Phase 1: Loading from checkpoint ===")
+        with open(phase1_checkpoint) as f:
+            all_results = json.load(f)
+        logger.info("Loaded %d Phase 1 records from checkpoint", len(all_results))
+    else:
+        logger.info("=== Phase 1: Retrieval metrics ===")
+        all_results = run_retrieval_metrics(records, book_cache)
+        with open(phase1_checkpoint, "w") as f:
+            json.dump(all_results, f)
+        logger.info("Phase 1 checkpoint saved (%d records)", len(all_results))
 
     # Phase 2: ROUGE-L (optional, uses LLM)
     include_rouge = not args.skip_rouge
     if include_rouge:
         logger.info("=== Phase 2: ROUGE-L ===")
-        all_results = run_rouge_phase(all_results, records, book_cache)
+        all_results = run_rouge_phase(all_results, records, book_cache,
+                                      checkpoint_path=rouge_checkpoint)
 
     # Print and save
     summary = print_results(all_results, include_rouge=include_rouge)

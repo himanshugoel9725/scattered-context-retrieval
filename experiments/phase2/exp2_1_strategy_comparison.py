@@ -8,7 +8,9 @@ Generate Figures 6, 7, 8.
 
 import json
 import logging
+import random
 import time
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -64,41 +66,80 @@ def run(config: dict | None = None):
     if config is None:
         config = get_experiments_config()["phase2"]["exp2_1_strategy_comparison"]
 
+    random.seed(42)
+
     out_dir = results_dir("exp2_1")
+    checkpoint_path = out_dir / "exp2_1_checkpoint.json"
     chunker = Chunker(chunk_size=512, overlap=128)
     k = config.get("retrieval_k", 15)
-    n_queries_per_dataset = config.get("queries_per_dataset", 300)
+    n_queries_per_dataset = config.get("queries_per_dataset", 200)
 
-    datasets = config.get("datasets", ["quality", "cuad", "qasper"])
+    datasets = config.get("datasets", ["quality", "cuad", "qasper", "scatterqa"])
+
+    # Resume from checkpoint if available
     all_results = {}
+    if checkpoint_path.exists():
+        with open(checkpoint_path) as f:
+            all_results = json.load(f)
+        done = list(all_results.keys())
+        logger.info("Resuming from checkpoint: %s already done", done)
 
     for ds_name in datasets:
+        if ds_name in all_results:
+            logger.info("Skipping %s (already in checkpoint)", ds_name)
+            continue
         logger.info("=== Dataset: %s ===", ds_name)
         dataset = load_dataset(ds_name)
         if not dataset:
             logger.warning("Skipping %s (load failed)", ds_name)
             continue
 
-        ds_results = []
-        queries_done = 0
+        # ------------------------------------------------------------------
+        # Phase 1: Collect all valid (doc_id, qa_index) pairs with chunking.
+        # Index building is deferred to avoid doing it for docs we won't use.
+        # ------------------------------------------------------------------
+        doc_store: dict[str, tuple] = {}   # doc_id → (doc, chunks)
+        all_pairs: list[tuple[str, int]] = []
 
         for doc in dataset:
-            if queries_done >= n_queries_per_dataset:
-                break
-
             text = clean_text(doc.text)
             chunks = chunker.chunk_document(doc.doc_id, text)
             if len(chunks) < 5:
                 continue
+            doc_store[doc.doc_id] = (doc, chunks)
+            for qa_idx in range(len(doc.questions)):
+                all_pairs.append((doc.doc_id, qa_idx))
+
+        # ------------------------------------------------------------------
+        # Phase 2: Random sample up to n_queries_per_dataset pairs.
+        # For ScatterQA (small dataset) this naturally spans all novels.
+        # ------------------------------------------------------------------
+        n_sample = min(n_queries_per_dataset, len(all_pairs))
+        sampled_pairs = random.sample(all_pairs, n_sample)
+        logger.info("[%s] Sampled %d / %d available queries",
+                    ds_name, n_sample, len(all_pairs))
+
+        # Group by doc_id so we build each doc's index exactly once
+        by_doc: dict[str, list[int]] = defaultdict(list)
+        for doc_id, qa_idx in sampled_pairs:
+            by_doc[doc_id].append(qa_idx)
+
+        # ------------------------------------------------------------------
+        # Phase 3: Build indices per needed doc and evaluate sampled queries.
+        # ------------------------------------------------------------------
+        ds_results = []
+        queries_done = 0
+
+        for doc_id, qa_indices in by_doc.items():
+            doc, chunks = doc_store[doc_id]
             chunk_map = {c.chunk_id: c for c in chunks}
 
-            vector_idx, entity_idx = _build_indices(doc.doc_id, chunks, chunk_map)
+            vector_idx, entity_idx = _build_indices(doc_id, chunks, chunk_map)
             strategies = _get_strategies(vector_idx, entity_idx, chunk_map)
             strategies["BM25"] = BM25Retriever(chunks)
 
-            for qa in doc.questions:
-                if queries_done >= n_queries_per_dataset:
-                    break
+            for qa_idx in qa_indices:
+                qa = doc.questions[qa_idx]
                 query = qa["question"]
                 reference = qa.get("answer", "")
 
@@ -107,7 +148,7 @@ def run(config: dict | None = None):
                 entity = entities[0] if entities else None
 
                 entry = {"query": query, "reference": reference,
-                         "doc_id": doc.doc_id, "dataset": ds_name,
+                         "doc_id": doc_id, "dataset": ds_name,
                          "detected_entity": entity}
 
                 for strat_name, retriever in strategies.items():
@@ -117,7 +158,7 @@ def run(config: dict | None = None):
 
                     # Generate answer
                     context_texts = [r.text for r in retrieved[:k]]
-                    syn_chunks = to_synthesis_chunks(retrieved[:k], chunk_map, doc.doc_id)
+                    syn_chunks = to_synthesis_chunks(retrieved[:k], chunk_map, doc_id)
                     result = synthesize(query, syn_chunks, entity=entity, model="gpt-4o-mini")
                     answer = result["answer"]
                     elapsed = time.perf_counter() - t0
@@ -134,14 +175,20 @@ def run(config: dict | None = None):
                 ds_results.append(entry)
                 queries_done += 1
                 if queries_done % 10 == 0 or queries_done <= 3:
-                    logger.info("[%s] %d/%d queries done", ds_name, queries_done, n_queries_per_dataset)
+                    logger.info("[%s] %d/%d queries done", ds_name, queries_done, n_sample)
 
         all_results[ds_name] = ds_results
         logger.info("Dataset %s: %d queries evaluated", ds_name, len(ds_results))
+        # Save checkpoint after each dataset so crashes don't lose work
+        with open(checkpoint_path, "w") as f:
+            json.dump(all_results, f, indent=2, default=str)
+        logger.info("Checkpoint saved to %s", checkpoint_path)
 
-    # Save
+    # Save final results and clean up checkpoint
     with open(out_dir / "exp2_1_results.json", "w") as f:
         json.dump(all_results, f, indent=2, default=str)
+    if checkpoint_path.exists():
+        checkpoint_path.unlink()
 
     _generate_figures(all_results, out_dir)
     logger.info("Exp 2.1 complete. Cost so far: $%.4f. Results in %s",

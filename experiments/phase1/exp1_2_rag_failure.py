@@ -230,11 +230,38 @@ def _plot_figure3(results: dict, out_dir: Path):
 
 
 def _plot_figure4(results: dict, out_dir: Path):
-    """Figure 4: Scatter plot — scatter factor vs ROUGE-L."""
+    """Figure 4: Jitter strip plot — per-query ROUGE-L distribution by query type x strategy."""
+    from src.utils.plotting import PALETTE
+
     fig, ax = create_figure(figsize=(8, 5))
-    ax.set_xlabel("Query Type")
+
+    rng = np.random.default_rng(42)
+    strategies = [("bm25", "BM25"), ("semantic", "Semantic")]
+    # x layout: localized pair at 0/0.5, gap, scattered pair at 1.5/2.0
+    x_positions = {("localized", "bm25"): 0.0, ("localized", "semantic"): 0.5,
+                   ("scattered", "bm25"): 1.5, ("scattered", "semantic"): 2.0}
+
+    for si, (key, label) in enumerate(strategies):
+        color = PALETTE[si]
+        for qt in ("localized", "scattered"):
+            scores = [r[f"{key}_rougeL"] for r in results[qt] if f"{key}_rougeL" in r]
+            if not scores:
+                continue
+            xc = x_positions[(qt, key)]
+            jitter = rng.uniform(-0.12, 0.12, size=len(scores))
+            ax.scatter(xc + jitter, scores, alpha=0.35, s=18, color=color,
+                       label=label if qt == "localized" else None)
+            ax.hlines(np.mean(scores), xc - 0.18, xc + 0.18,
+                      colors=color, linewidths=2.5)
+
+    ax.set_xticks([0.25, 1.75])
+    ax.set_xticklabels(["Localized", "Scattered"])
     ax.set_ylabel("ROUGE-L F1")
     ax.set_title("Performance Degradation on Scattered Queries")
+    ax.set_xlim(-0.4, 2.4)
+    ax.set_ylim(-0.02, 1.02)
+    ax.legend(title="Strategy")
+    ax.grid(axis="y", linestyle="--", alpha=0.4)
     save_figure(fig, out_dir / "figure4_scatter_degradation.pdf")
 
 

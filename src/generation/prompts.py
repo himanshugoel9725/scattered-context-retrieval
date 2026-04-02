@@ -65,12 +65,10 @@ Respond with ONLY a JSON object:
 ICS_PRESENCE_CHECK_PROMPT = """You are checking whether a specific attribute is mentioned in an answer.
 
 Answer text:
-"{answer}"
+"{generated_answer}"
 
 Attribute to check: {attribute_name}
-Description: {attribute_description}
-
-Question: {probe}
+Gold evidence: {gold_evidence}
 
 Respond with ONLY "yes" or "no"."""
 

@@ -339,7 +339,8 @@ def load_scatterqa(max_docs: int | None = None, **kwargs) -> list[Document]:
     from src.data.gutenberg import download_gutenberg_text
     from src.evaluation.gold_schema import load_gold_evidence
 
-    gold_path = data_dir() / "scatterqa" / "gold_evidence.jsonl"
+    cleaned_path = data_dir() / "scatterqa" / "gold_evidence_cleaned.jsonl"
+    gold_path = cleaned_path if cleaned_path.exists() else data_dir() / "scatterqa" / "gold_evidence.jsonl"
     if not gold_path.exists():
         logger.warning("ScatterQA data not found at %s — dataset still building?", gold_path)
         return []

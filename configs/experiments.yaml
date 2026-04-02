@@ -42,15 +42,15 @@ phase2:
     description: "Compare 5 retrieval strategies on 4 core datasets"
     strategies: [standard_semantic, entity_expanded, entity_first, iterative, hybrid_entity]
     datasets: [quality, cuad, qasper, scatterqa]
-    queries_per_dataset: 50
+    queries_per_dataset: 200
     retrieval_k: 15
     generation_model: "gpt-4o-mini"
     output_figures: [fig6_retrieval_completeness, fig7_ics_main_result, fig8_quality_vs_latency]
 
   exp2_2_ablation:
     description: "Ablation study — remove one component at a time"
-    dataset: quality
-    queries: 50
+    dataset: scatterqa
+    queries: 200
     ablations:
       - full_system
       - minus_entity_index
